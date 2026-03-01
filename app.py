@@ -12,8 +12,12 @@ st.set_page_config(
     layout="wide"
 )
 
-st.title("🐛 Agricultural Pest Detection App")
-st.write("Upload an image to detect agricultural pests using YOLOv8.")
+# -----------------------------
+# Header Section
+# -----------------------------
+st.markdown("<h1 style='text-align: center;'>🐛 Agricultural Pest Detection App</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center;'>Upload an image of your crops/pests and click Analyze to detect pests.</p>", unsafe_allow_html=True)
+st.markdown("---")
 
 # -----------------------------
 # Load Model
@@ -34,21 +38,18 @@ uploaded_file = st.file_uploader(
 )
 
 if uploaded_file is not None:
+    # Open and display uploaded image
     image = Image.open(uploaded_file)
     image_np = np.array(image)
 
-    col1, col2 = st.columns(2)
+    st.subheader("Uploaded Image")
+    st.image(image, use_column_width=True)
 
-    with col1:
-        st.subheader("Original Image")
-        st.image(image, use_column_width=True)
+    # Add Analyze Button
+    if st.button("Analyze to Detect Pests"):
+        with st.spinner("Analyzing image, please wait..."):
+            results = model(image_np)
+            annotated_image = results[0].plot()
 
-    # Run YOLO inference
-    results = model(image_np)
-
-    # Get annotated image directly
-    annotated_image = results[0].plot()
-
-    with col2:
         st.subheader("Detected Pests")
         st.image(annotated_image, use_column_width=True)
