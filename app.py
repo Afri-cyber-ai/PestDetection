@@ -48,8 +48,13 @@ if uploaded_file is not None:
     # Add Analyze Button
     if st.button("Analyze to Detect Pests"):
         with st.spinner("Analyzing image, please wait..."):
+            # Run YOLO inference
             results = model(image_np)
-            annotated_image = results[0].plot()
 
-        st.subheader("Detected Pests")
-        st.image(annotated_image, use_column_width=True)
+            # Check if any boxes were detected
+            if len(results[0].boxes) == 0:
+                st.warning("⚠️ No pests detected in this image. Try a different image or ensure pests are clearly visible.")
+            else:
+                annotated_image = results[0].plot()
+                st.subheader("Detected Pests")
+                st.image(annotated_image, use_column_width=True)
